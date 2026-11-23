@@ -1,11 +1,11 @@
 /*
-    File: database/02_sample_data/demo/orders_and_transactions.sql
+    File: database/02_sample_data/parts/07_orders_and_transactions.sql
     Tables: Orders, Vendor_Orders, Order_Items, Payments, Shipments,
             Reviews, Inventory_Transactions
     Description: Demo orders with payments, shipments, reviews, and the
                  stock movements they cause. Order totals are not stored;
                  they are computed from Order_Items.
-    Prerequisite: all earlier demo scripts loaded.
+    Prerequisite: 01_roles.sql through 06_promotions_and_carts.sql loaded.
 */
 
 USE pckal_db;
@@ -45,8 +45,10 @@ INSERT INTO Vendor_Orders (vendor_order_id, order_id, vendor_id, vendor_order_st
   (16, 12, 1, 'cancelled'),
   (17, 13, 3, 'completed');
 
--- Each item sits in the suborder of the vendor that owns the listing
--- (listing 1-7 = vendor 1, 8-15 = vendor 2, 16-23 = vendor 3).
+-- Each item sits in the suborder of the vendor that owns the listing.
+-- Original listings 1-7 = vendor 1, 8-15 = vendor 2, 16-23 = vendor 3;
+-- added listings 24-36 belong to vendors 4-10 and are not used by these
+-- existing order-history examples.
 -- unit_price_before_discount = listing price at checkout;
 -- discount_applied_per_unit  = promotion discount valid on the order date.
 INSERT INTO Order_Items (order_item_id, vendor_order_id, vendor_product_id, quantity, unit_price_before_discount, discount_applied_per_unit) VALUES
@@ -174,7 +176,8 @@ SET i.quantity_on_hand = COALESCE(
 WHERE i.vendor_product_id > 0;
 
 -- Verification: expect 13 orders, 17 vendor orders, 25 items, 13 payments,
--- 16 shipments, 14 reviews, 52 inventory transactions
+-- 16 shipments, 14 reviews, and 65 inventory transactions after the
+-- 36 initial restocks in vendor_listings_and_inventory.sql
 SELECT (SELECT COUNT(*) FROM Orders)                 AS orders_count,
        (SELECT COUNT(*) FROM Vendor_Orders)          AS vendor_orders_count,
        (SELECT COUNT(*) FROM Order_Items)            AS order_items_count,

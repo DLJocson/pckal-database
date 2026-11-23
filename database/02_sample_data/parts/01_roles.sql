@@ -1,7 +1,9 @@
 /*
-    File: database/02_sample_data/reference/roles.sql
+    File: database/02_sample_data/parts/01_roles.sql
     Table: Roles
-    Description: Inserts the application-level roles.
+    Description: Inserts the three application-level roles defined by the
+                 finalized schema. This reference table intentionally has
+                 three rows: customer, vendor, and administrator.
     Prerequisite Parent Tables: None
 */
 

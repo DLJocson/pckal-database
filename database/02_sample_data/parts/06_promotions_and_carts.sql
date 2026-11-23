@@ -1,14 +1,16 @@
 /*
-    File: database/02_sample_data/demo/promotions_and_carts.sql
+    File: database/02_sample_data/parts/06_promotions_and_carts.sql
     Tables: Promotions, Shopping_Carts, Cart_Items
-    Description: Demo promotions (expired, active, upcoming) and customer carts.
-                 Promotion date ranges for the same listing do not overlap.
-    Prerequisite: vendor_listings_and_inventory.sql loaded.
+    Description: 10 demo promotions (expired, active, upcoming) and 10
+                 customer carts with cart items. Promotion date ranges for the
+                 same listing do not overlap.
+    Prerequisite: 05_vendor_listings_and_inventory.sql loaded.
 */
 
 USE pckal_db;
 
--- Status as of 2026-11-21: expired 1, 2, 4, 7 | active 3, 6, 8, 9 | upcoming 5
+-- Status as of 2026-11-23: expired 1, 2, 4, 7 | active 3, 6, 8, 9
+-- | upcoming 5, 10. Update this date when using the sample data later.
 INSERT INTO Promotions (promotion_id, vendor_product_id, discount_type, discount_value, start_date, end_date, created_at) VALUES
   (1, 12, 'percentage',   10.00,   '2026-09-01', '2026-09-30', '2026-08-25 09:00:00'),
   (2, 5,  'fixed_amount', 2000.00, '2026-09-15', '2026-10-15', '2026-09-10 09:00:00'),
@@ -18,7 +20,8 @@ INSERT INTO Promotions (promotion_id, vendor_product_id, discount_type, discount
   (6, 12, 'percentage',   8.00,    '2026-11-01', '2026-11-30', '2026-10-25 09:00:00'),
   (7, 14, 'fixed_amount', 500.00,  '2026-10-05', '2026-10-12', '2026-10-01 09:00:00'),
   (8, 9,  'fixed_amount', 1000.00, '2026-11-18', '2026-11-25', '2026-11-15 09:00:00'),
-  (9, 13, 'fixed_amount', 1500.00, '2026-11-10', '2026-12-10', '2026-11-05 09:00:00');
+  (9, 13, 'fixed_amount', 1500.00, '2026-11-10', '2026-12-10', '2026-11-05 09:00:00'),
+  (10,24, 'percentage',   10.00,   '2026-12-01', '2026-12-15', '2026-11-16 09:00:00');
 
 -- Customer carts (carts 4 and 5 became orders 10 and 11)
 INSERT INTO Shopping_Carts (cart_id, user_id, cart_status, created_at) VALUES
@@ -27,7 +30,11 @@ INSERT INTO Shopping_Carts (cart_id, user_id, cart_status, created_at) VALUES
   (3, 7,  'abandoned',   '2026-10-22 19:30:00'),
   (4, 8,  'checked_out', '2026-11-19 08:30:00'),
   (5, 9,  'checked_out', '2026-11-20 12:00:00'),
-  (6, 10, 'active',      '2026-11-20 22:45:00');
+  (6, 10, 'active',      '2026-11-20 22:45:00'),
+  (7, 5,   'abandoned',   '2026-09-03 11:00:00'),
+  (8, 6,   'abandoned',   '2026-09-05 16:00:00'),
+  (9, 7,   'abandoned',   '2026-09-07 14:30:00'),
+  (10,10,  'abandoned',   '2026-09-08 18:45:00');
 
 -- A listing appears only once per cart
 INSERT INTO Cart_Items (cart_item_id, cart_id, vendor_product_id, quantity, added_at) VALUES
@@ -41,9 +48,17 @@ INSERT INTO Cart_Items (cart_item_id, cart_id, vendor_product_id, quantity, adde
   (8,  4, 16, 1, '2026-11-19 08:36:00'),
   (9,  5, 13, 1, '2026-11-20 12:05:00'),
   (10, 6, 19, 1, '2026-11-20 22:50:00'),
-  (11, 6, 20, 1, '2026-11-20 22:52:00');
+  (11, 6, 20, 1, '2026-11-20 22:52:00'),
+  (12, 7, 11, 1, '2026-09-03 11:05:00'),
+  (13, 7, 13, 1, '2026-09-03 11:07:00'),
+  (14, 8, 8,  1, '2026-09-05 16:05:00'),
+  (15, 8, 15, 1, '2026-09-05 16:07:00'),
+  (16, 9, 6,  1, '2026-09-07 14:35:00'),
+  (17, 9, 14, 1, '2026-09-07 14:37:00'),
+  (18,10, 16, 1, '2026-09-08 18:50:00'),
+  (19,10, 22, 1, '2026-09-08 18:52:00');
 
--- Verification: expect 9, 6, 11
+-- Verification: expect 10 promotions, 10 carts, and 19 cart items
 SELECT (SELECT COUNT(*) FROM Promotions)     AS promotions,
        (SELECT COUNT(*) FROM Shopping_Carts) AS carts,
        (SELECT COUNT(*) FROM Cart_Items)     AS cart_items;
